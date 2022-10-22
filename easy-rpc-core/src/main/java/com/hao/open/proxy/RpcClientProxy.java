@@ -7,6 +7,7 @@ import com.hao.open.exception.RpcException;
 import com.hao.open.remoting.dto.RpcRequest;
 import com.hao.open.remoting.dto.RpcResponse;
 import com.hao.open.remoting.transport.RpcRequestTransport;
+import com.hao.open.remoting.transport.netty.client.NettyRpcClient;
 import com.hao.open.remoting.transport.socket.SocketRpcClient;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 动态代理类，使得可以像调用本地方法一样进行 rpc 调用
@@ -67,10 +69,10 @@ public class RpcClientProxy implements InvocationHandler {
                 .version(rpcServiceConfig.getVersion())
                 .build();
         RpcResponse<Object> rpcResponse = null;
-//        if (rpcRequestTransport instanceof NettyRpcClient) {
-//            CompletableFuture<RpcResponse<Object>> completableFuture = (CompletableFuture<RpcResponse<Object>>) rpcRequestTransport.sendRpcRequest(rpcRequest);
-//            rpcResponse = completableFuture.get();
-//        }
+        if (rpcRequestTransport instanceof NettyRpcClient) {
+            CompletableFuture<RpcResponse<Object>> completableFuture = (CompletableFuture<RpcResponse<Object>>) rpcRequestTransport.sendRpcRequest(rpcRequest);
+            rpcResponse = completableFuture.get();
+        }
         if (rpcRequestTransport instanceof SocketRpcClient) {
             rpcResponse = (RpcResponse<Object>) rpcRequestTransport.sendRpcRequest(rpcRequest);
         }

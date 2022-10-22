@@ -2,6 +2,7 @@ package com.hao.open;
 
 import com.hao.open.config.BaseConfig;
 import com.hao.open.config.RpcServiceConfig;
+import com.hao.open.remoting.transport.netty.server.NettyRpcServer;
 import com.hao.open.remoting.transport.socket.SocketRpcServer;
 import com.hao.open.service.HelloService;
 import com.hao.open.service.HelloServiceImpl;
@@ -13,7 +14,17 @@ import java.util.Properties;
 public class UserServiceApplication {
 
     public static void main(String[] args) {
-        startWithSocket(args);
+        startWithNetty();
+    }
+
+    private static void startWithNetty() {
+        NettyRpcServer nettyRpcServer = new NettyRpcServer();
+        // Register service manually
+        HelloService helloService = new HelloServiceImpl();
+        RpcServiceConfig rpcServiceConfig = RpcServiceConfig.builder()
+                .group("test2").version("version2").service(helloService).build();
+        nettyRpcServer.registerService(rpcServiceConfig);
+        nettyRpcServer.start();
     }
 
     private static void startWithSocket(String[] args) {

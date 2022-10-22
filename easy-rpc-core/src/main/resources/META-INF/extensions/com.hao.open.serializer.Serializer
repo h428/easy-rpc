@@ -1,0 +1,3 @@
+kyro=com.hao.open.serializer.kyro.KryoSerializer
+protostuff=com.hao.open.serializer.protostuff.ProtostuffSerializer
+hessian=com.hao.open.serializer.hessian.HessianSerializer
